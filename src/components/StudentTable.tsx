@@ -52,7 +52,7 @@ function StudentTable() {
                 </tr>
                 </thead>
                 <tbody>
-                {user.map((student: any, index: any) => (
+                {user?.map((student: any, index: any) => (
                     <tr key={index}>
 
                         <td>{student.name}</td>
