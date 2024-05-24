@@ -1,8 +1,20 @@
-import React, { FC  } from 'react';
+import React, {FC, useEffect} from 'react';
 import {Link, Route} from 'react-router-dom';
-import StudentDetails from "./studentDetails";
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchUser } from '../store/usersSlice';
+import { RootState } from '../store/store';
 
-function StudentTable({ students }) {
+function StudentTable() {
+    const dispatch = useDispatch();
+    // @ts-ignore
+    const {user, loading, error } = useSelector<any>((state: RootState) => state.users)
+
+    useEffect(() => {
+        // @ts-ignore
+        dispatch(fetchUser());
+    }, [dispatch]);
+
+
     function detailsButtonClick(e){
         e.preventDefault();
         console.log('Details Button Click');
@@ -17,6 +29,11 @@ function StudentTable({ students }) {
         e.preventDefault();
         console.log('Delete Button Click');
     }
+
+    if (loading === 'pending') return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
+    if (!user) return <div>No user data available</div>;
+
 
 
     return (
@@ -35,7 +52,7 @@ function StudentTable({ students }) {
                 </tr>
                 </thead>
                 <tbody>
-                {students.map((student: any, index: any) => (
+                {user?.map((student: any, index: any) => (
                     <tr key={index}>
 
                         <td>{student.name}</td>

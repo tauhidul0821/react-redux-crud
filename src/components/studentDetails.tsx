@@ -1,34 +1,61 @@
 import React, {useEffect, useState} from 'react';
 import {Link, useParams} from 'react-router-dom';
+import {fetchUserById} from "../store/usersSlice";
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../store/store';
 
 const StudentDetails = () => {
     const { id } = useParams();
+    // Using redux thunk
+    const dispatch = useDispatch();
+    // @ts-ignore
+    const {user, loading, error } = useSelector<any>((state: RootState) => state.users)
 
-    const [user, setUser] = useState<any>(null); // Use 'any' as the initial type
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<any>(null);
 
+    // Using api call
+    // const [user, setUser] = useState<any>(null); // Use 'any' as the initial type
+    // const [loading, setLoading] = useState(true);
+    // const [error, setError] = useState<any>(null);
+    //
+    // useEffect(() => {
+    //     const fetchUser = async () => {
+    //         try {
+    //             const response = await fetch(`https://jsonplaceholder.typicode.com/users/${id}`);
+    //             if (!response.ok) {
+    //                 throw new Error('Network response was not ok');
+    //             }
+    //             const userData = await response.json();
+    //             setUser(userData);
+    //         } catch (error) {
+    //             setError(error);
+    //         } finally {
+    //             setLoading(false);
+    //         }
+    //     };
+    //
+    //     fetchUser();
+    // }, []);
+    //
+
+
+    // Using redux thunk
     useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const response = await fetch(`https://jsonplaceholder.typicode.com/users/${id}`);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const userData = await response.json();
-                setUser(userData);
-            } catch (error) {
-                setError(error);
-            } finally {
-                setLoading(false);
-            }
-        };
+        if (id) {
+            // @ts-ignore
+            dispatch(fetchUserById(Number(id)));
+        }
+    }, [dispatch, id]);
 
-        fetchUser();
-    }, []);
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error.message}</div>;
+    // Using api call
+    // if (loading) return <div>Loading...</div>;
+    // if (error) return <div>Error: {error.message}</div>;
+    // if (!user) return <div>No user data available</div>;
+
+
+    // Using Redux Thunk
+    if (loading === 'pending') return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
     if (!user) return <div>No user data available</div>;
 
     return (
